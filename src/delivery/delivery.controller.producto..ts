@@ -8,34 +8,34 @@ import {
   Put,
 } from '@nestjs/common';
 import { ProductoService } from './delivery.service.producto';
-import { Task } from '../domain/task.model';
+import { Producto } from '../domain/producto.model';
 
-@Controller('tasks')
-export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+@Controller('productos')
+export class ProductoController {
+  constructor(private readonly productosService: ProductoService) {}
 
   @Get()
-  findAll(): Promise<Task[]> {
-    return this.tasksService.findAll();
+  findAll(): Promise<Producto[]> {
+    return this.productosService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Task | null> {
-    return this.tasksService.findOne(+id);
+  findOne(@Param('id') id: string): Promise<Producto | null> {
+    return this.productosService.findOne(+id);
   }
 
   @Post()
-  create(@Body() taskData: Partial<Task>): Promise<Task> {
-    return this.tasksService.create(taskData);
+  create(@Body() productoData: Partial<Producto>): Promise<Producto> {
+    return this.productosService.create(productoData);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() taskData: Partial<Task>): Promise<Task | null> {
-    return this.tasksService.update(+id, taskData);
+  update(@Param('id') id: string, @Body() productoData: Partial<Producto>): Promise<Producto | null> {
+    return this.productosService.update(+id, productoData);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
-    return this.tasksService.remove(+id);
+    return this.productosService.remove(+id);
   }
 }

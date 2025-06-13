@@ -19,7 +19,7 @@ export class Producto {
   precio: number;
 
   @Column({ nullable: true }) // URL de la imagen del producto para mostrar en la app
-  urlImagen: string;
+  urlImagen: string | null;
 
   @Column({ default: true }) // Indica si el producto está disponible para la venta (true) o agotado/temporalmente fuera (false)
   estaDisponible: boolean;

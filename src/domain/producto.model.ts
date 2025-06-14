@@ -1,7 +1,7 @@
 export interface Producto {
   id: number;
   nombre: string;
-  // descripcion: string;
+  descripcion: string | null;
   categoria: 'EMPANADA' | 'GASEOSA';
   precio: number;
   urlImagen: string | null; // Usamos `string | null` para reflejar `nullable: true`

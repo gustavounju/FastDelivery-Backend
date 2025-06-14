@@ -5,8 +5,11 @@ export class Producto {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, type: 'varchar' }) // Añadimos 'type: varchar' explícitamente
   nombre: string; // Ej: "Empanada de Pollo", "Coca-Cola Zero"
+
+  @Column({ type: 'text', nullable: true }) // Usa 'text' para descripciones más largas y 'nullable: true'
+  descripcion: string | null; // Acepta string o null
 
   @Column({
     type: 'enum',
@@ -18,8 +21,8 @@ export class Producto {
   @Column({ type: 'decimal', precision: 10, scale: 2 }) // Precio con hasta 2 decimales
   precio: number;
 
-  @Column({ nullable: true }) // URL de la imagen del producto para mostrar en la app
-  urlImagen: string | null;
+  @Column({ nullable: true, type: 'varchar', length: 255 }) // <--- ¡CAMBIO CLAVE AQUÍ!
+  urlImagen: string | null; // URL de la imagen del producto para mostrar en la app
 
   @Column({ default: true }) // Indica si el producto está disponible para la venta (true) o agotado/temporalmente fuera (false)
   estaDisponible: boolean;

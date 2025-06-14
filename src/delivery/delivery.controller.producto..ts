@@ -8,7 +8,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { ProductoService } from './delivery.service.producto';
-import { Producto } from '../domain/producto.model';
+import { Producto } from '../entities/delivery.entity.producto';
+// import { Producto } from '../domain/producto.model';
 
 @Controller('productos')
 export class ProductoController {
@@ -30,7 +31,10 @@ export class ProductoController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() productoData: Partial<Producto>): Promise<Producto | null> {
+  update(
+    @Param('id') id: string,
+    @Body() productoData: Partial<Producto>,
+  ): Promise<Producto | null> {
     return this.productosService.update(+id, productoData);
   }
 

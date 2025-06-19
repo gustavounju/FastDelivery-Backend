@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { ProductoService } from './delivery.service.producto';
 import { Producto } from '../entities/delivery.entity.producto';
-// import { Producto } from '../domain/producto.model';
 
 @Controller('productos')
 export class ProductoController {

@@ -20,6 +20,8 @@ async function bootstrap() {
     forbidNonWhitelisted: true // Lanza error si llegan propiedades no definidas
   }));
 
+  app.enableCors(); // <-- Habilita CORS para todos los orígenes (solo para desarrollo)
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

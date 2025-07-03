@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { ProductoService } from './delivery.service.producto';
-import { Producto } from '../entities/delivery.entity.producto';
+import { Producto } from '../entities/producto.entity';
 
 @Controller('productos')
 export class ProductoController {

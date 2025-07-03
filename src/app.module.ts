@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductoController } from './delivery/delivery.controller.producto.';
-import { ProductoService } from './delivery/delivery.service.producto';
-import { Producto } from './entities/delivery.entity.producto';
-import { CategoriaController } from './delivery/delivery.controller.categoria';
-import { CategoriaService } from './delivery/delivery.service.categoria';
-import { Categoria } from './entities/delivery.entity.categoria';
+
+import { CategoriaModule } from './modules/categoria/categoria.module';
+import { ProductoModule } from './modules/producto/producto.module';
+import { ClienteModule } from './modules/cliente/cliente.module';
+import { CadeteModule } from './modules/cadete/cadete.module';
+import { PagoModule } from './modules/pago/pago.module';
+import { PedidoModule } from './modules/pedido/pedido.module';
 
 @Module({
   imports: [
@@ -18,13 +19,17 @@ import { Categoria } from './entities/delivery.entity.categoria';
       username: 'root',
       password: 'mysql',
       database: 'delivery_db',
-      entities: [Producto, Categoria],
-
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // ¡Solo para desarrollo!
     }),
-    TypeOrmModule.forFeature([Producto, Categoria]),
+    CategoriaModule,
+    ProductoModule,/*
+    ClienteModule,
+    CadeteModule,
+    PagoModule,
+    PedidoModule,*/
   ],
-  controllers: [AppController, ProductoController, CategoriaController],
-  providers: [AppService, ProductoService, CategoriaService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

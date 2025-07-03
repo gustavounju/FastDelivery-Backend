@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { CategoriaService } from './delivery.service.categoria';
-import { Categoria } from '../entities/delivery.entity.categoria'; // Importa tu entidad Categoria
+import { Categoria } from '../entities/categoria.entity'; // Importa tu entidad Categoria
 
 @Controller('categorias')
 export class CategoriaController {

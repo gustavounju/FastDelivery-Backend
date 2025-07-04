@@ -1,26 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCadeteDto } from './dto/create-cadete.dto';
 import { UpdateCadeteDto } from './dto/update-cadete.dto';
+import { Cadete } from 'src/entities/cadete.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CadeteService {
-  create(createCadeteDto: CreateCadeteDto) {
-    return 'This action adds a new cadete';
+  constructor(
+    @InjectRepository(Cadete)
+    private cadeteRepository: Repository<Cadete>,
+  ) {}
+
+  create(dto: CreateCadeteDto) {
+    return this.cadeteRepository.save(dto);
   }
 
   findAll() {
-    return `This action returns all cadete`;
+    return this.cadeteRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cadete`;
+  async findOne(id: number) {
+    const cadete = await this.cadeteRepository.findOneBy({ id });
+    if (!cadete) {
+      throw new NotFoundException('Cadete no encontrado');
+    }
+    return cadete;
   }
 
-  update(id: number, updateCadeteDto: UpdateCadeteDto) {
-    return `This action updates a #${id} cadete`;
+  async update(id: number, dto: UpdateCadeteDto) {
+    const cadete = await this.findOne(id);
+    if (!cadete) throw new NotFoundException('Cadete no encontrado');
+    Object.assign(cadete, dto);
+    return this.cadeteRepository.save(cadete);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cadete`;
+  async remove(id: number) {
+    const cadete = await this.findOne(id);
+    if (!cadete) throw new NotFoundException('Cadete no encontrado');
+    return this.cadeteRepository.remove(cadete);
   }
 }

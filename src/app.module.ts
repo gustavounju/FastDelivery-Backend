@@ -23,9 +23,9 @@ import { PedidoModule } from './modules/pedido/pedido.module';
       synchronize: true, // ¡Solo para desarrollo!
     }),
     CategoriaModule,
-    ProductoModule,/*
+    ProductoModule,
     ClienteModule,
-    CadeteModule,
+    CadeteModule,/*
     PagoModule,
     PedidoModule,*/
   ],

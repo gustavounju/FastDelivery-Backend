@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { CadeteService } from './cadete.service';
 import { CreateCadeteDto } from './dto/create-cadete.dto';
 import { UpdateCadeteDto } from './dto/update-cadete.dto';
@@ -8,27 +8,32 @@ export class CadeteController {
   constructor(private readonly cadeteService: CadeteService) {}
 
   @Post()
-  create(@Body() createCadeteDto: CreateCadeteDto) {
-    return this.cadeteService.create(createCadeteDto);
+  async create(@Body() dto: CreateCadeteDto) {
+    const data = await this.cadeteService.create(dto);
+    return { success: true, data, message: 'Cadete creado correctamente' };
   }
 
   @Get()
-  findAll() {
-    return this.cadeteService.findAll();
+  async findAll() {
+    const data = await this.cadeteService.findAll();
+    return { success: true, data, message: 'Cadetes obtenidos correctamente' };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cadeteService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const data = await this.cadeteService.findOne(id);
+    return { success: true, data, message: 'Cadete obtenido correctamente' };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCadeteDto: UpdateCadeteDto) {
-    return this.cadeteService.update(+id, updateCadeteDto);
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() dto: UpdateCadeteDto) {
+    const data = await this.cadeteService.update(id, dto);
+    return { success: true, data, message: 'Cadete actualizado correctamente' };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cadeteService.remove(+id);
+  async remove(@Param('id') id: number) {
+    const data = await this.cadeteService.remove(id);
+    return { success: true, data, message: 'Cadete eliminado correctamente' };
   }
 }

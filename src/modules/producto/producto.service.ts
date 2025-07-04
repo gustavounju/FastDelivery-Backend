@@ -34,11 +34,15 @@ export class ProductoService {
     return this.productoRepository.find({ relations: ['categoria'] });
   }
 
-  findOne(id: number) {
-    return this.productoRepository.findOne({
+  async findOne(id: number) {
+    const producto = await this.productoRepository.findOne({
       where: { id },
       relations: ['categoria']
     });
+    if (!producto) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+    return producto;
   }
 
   async update(id: number, dto: UpdateProductoDto) {
@@ -68,6 +72,6 @@ export class ProductoService {
   async remove(id: number) {
     const producto = await this.findOne(id);
     if (!producto) throw new NotFoundException('Producto no encontrado.');
-    return this.productoRepository.delete(id);
+    return this.productoRepository.remove(producto);
   }
 }

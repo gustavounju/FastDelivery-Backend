@@ -7,7 +7,7 @@ export class Cadete {
 
   @Column()
   nombre: string;
-
-  @Column({ length: 20, unique: true }) // Teléfono del repartidor (puede ser su ID de usuario)
-  telefono: string;
+  /*
+  @Column({ length: 20, unique: true }) // Teléfono del repartidor
+  telefono: string;*/
 }

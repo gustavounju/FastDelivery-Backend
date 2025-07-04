@@ -5,7 +5,7 @@ export class Cliente {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   dni: string;
 
   @Column({ length: 100 })
@@ -17,7 +17,7 @@ export class Cliente {
   @Column({ type: 'text' })
   direccion: string;
 
-  @Column()
+  @Column({ nullable: true})
   telefono: string;
 
   @Column({ unique: true })

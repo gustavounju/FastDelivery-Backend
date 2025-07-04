@@ -20,8 +20,12 @@ export class CategoriaService {
     return this.categoriaRepository.find();
   }
 
-  findOne(id: number) {
-    return this.categoriaRepository.findOneBy({ id });
+  async findOne(id: number) {
+    const categoria = await this.categoriaRepository.findOneBy({ id });
+    if (!categoria) {
+      throw new NotFoundException('Categoria no encontrada');
+    }
+    return categoria;
   }
 
   async update(id: number, dto: UpdateCategoriaDto) {
@@ -33,6 +37,6 @@ export class CategoriaService {
   async remove(id: number) {
     const categoria = await this.findOne(id);
     if (!categoria) throw new NotFoundException('Categoría no encontrada');
-    return this.categoriaRepository.delete(id);
+    return this.categoriaRepository.remove(categoria);
   }
 }

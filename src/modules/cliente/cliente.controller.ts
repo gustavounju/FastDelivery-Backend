@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -8,27 +8,32 @@ export class ClienteController {
   constructor(private readonly clienteService: ClienteService) {}
 
   @Post()
-  create(@Body() createClienteDto: CreateClienteDto) {
-    return this.clienteService.create(createClienteDto);
+  async create(@Body() dto: CreateClienteDto) {
+    const data = await this.clienteService.create(dto);
+    return { success: true, data, message: 'Cliente creado correctamente' };
   }
 
   @Get()
-  findAll() {
-    return this.clienteService.findAll();
+  async findAll() {
+    const data = await this.clienteService.findAll();
+    return { success: true, data, message: 'Clientes obtenidos correctamente' };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clienteService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const data = await this.clienteService.findOne(id);
+    return { success: true, data, message: 'Cliente obtenido correctamente' };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClienteDto: UpdateClienteDto) {
-    return this.clienteService.update(+id, updateClienteDto);
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() dto: UpdateClienteDto) {
+    const data = await this.clienteService.update(id, dto);
+    return { success: true, data, message: 'Cliente actualizado correctamente' };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clienteService.remove(+id);
+  async remove(@Param('id') id: number) {
+    const data = await this.clienteService.remove(id);
+    return { success: true, data, message: 'Cliente eliminado correctamente' };
   }
 }

@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
-import { Pedido } from './pedido.entity';
 
 @Entity()
 export class Pago {
@@ -17,7 +16,4 @@ export class Pago {
 
   @Column({ nullable: true })
   mercadoPago: string;
-
-  @OneToOne(() => Pedido, pedido => pedido.pago)
-  pedido: Pedido;
 }

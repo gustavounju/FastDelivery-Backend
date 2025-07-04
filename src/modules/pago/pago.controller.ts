@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { PagoService } from './pago.service';
 import { CreatePagoDto } from './dto/create-pago.dto';
 import { UpdatePagoDto } from './dto/update-pago.dto';
@@ -8,27 +8,32 @@ export class PagoController {
   constructor(private readonly pagoService: PagoService) {}
 
   @Post()
-  create(@Body() createPagoDto: CreatePagoDto) {
-    return this.pagoService.create(createPagoDto);
+  async create(@Body() dto: CreatePagoDto) {
+    const data = await this.pagoService.create(dto);
+    return { success: true, data, message: 'Pago realizado con éxito' };
   }
 
   @Get()
-  findAll() {
-    return this.pagoService.findAll();
+  async findAll() {
+    const data = await this.pagoService.findAll();
+    return { success: true, data, message: 'Pagos obtenidos correctamente' };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pagoService.findOne(+id);
+  async findOne(@Param('id') id: number) {
+    const data = await this.pagoService.findOne(id);
+    return { success: true, data, message: 'Pago obtenido correctamente' };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePagoDto: UpdatePagoDto) {
-    return this.pagoService.update(+id, updatePagoDto);
+  @Put(':id')
+  async update(@Param('id') id: number, @Body()dto: UpdatePagoDto) {
+    const data = await this.pagoService.update(id, dto);
+    return { success: true, data, message: 'Pago actualizado correctamente' };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.pagoService.remove(+id);
+  async remove(@Param('id') id: number) {
+    const data = await this.pagoService.remove(id);
+    return { success: true, data, message: 'Pago eliminado correctamente' };
   }
 }

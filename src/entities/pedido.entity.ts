@@ -18,7 +18,7 @@ export class Pedido {
   @ManyToOne(() => Cadete, { nullable: true })
   cadete: Cadete;
 
-  @OneToOne(() => Pago, pago => pago.pedido, { cascade: true })
+  @ManyToOne(() => Pago, { nullable: true }) // FK opcional
   @JoinColumn()
   pago: Pago;
 

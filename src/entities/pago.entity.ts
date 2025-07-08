@@ -1,11 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Pedido } from './pedido.entity';
 
 @Entity()
 export class Pago {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn()
   fecha: Date;
 
   @Column('decimal')
@@ -14,6 +15,7 @@ export class Pago {
   @Column()
   estado: string;
 
-  @Column({ nullable: true })
-  mercadoPago: string;
+  @OneToOne(() => Pedido)
+  @JoinColumn()
+  pedido: Pedido;
 }

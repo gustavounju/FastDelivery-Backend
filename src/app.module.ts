@@ -25,9 +25,9 @@ import { PedidoModule } from './modules/pedido/pedido.module';
     CategoriaModule,
     ProductoModule,
     ClienteModule,
-    CadeteModule,/*
+    CadeteModule,
+    PedidoModule,
     PagoModule,
-    PedidoModule,*/
   ],
   controllers: [AppController],
   providers: [AppService],

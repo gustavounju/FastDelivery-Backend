@@ -36,10 +36,4 @@ export class PedidoController {
     const data = await this.pedidoService.remove(id);
     return { success: true, data, message: 'Pedido eliminado correctamente' };
   }
-
-  @Put(':id/pago/:pagoId')
-  async asignarPago(@Param('id') id: number, @Param('pagoId') pagoId: number) {
-    const data = await this.pedidoService.asignarPago(id, pagoId);
-    return { success: true, data, message: 'Pago asignado al pedido' };
-  }
 }

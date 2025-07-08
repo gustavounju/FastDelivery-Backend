@@ -17,7 +17,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,           // Elimina propiedades no declaradas en los DTO
-    forbidNonWhitelisted: true // Lanza error si llegan propiedades no definidas
+    transform: true
   }));
 
   app.enableCors(); // <-- Habilita CORS para todos los orígenes (solo para desarrollo)

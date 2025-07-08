@@ -1,17 +1,13 @@
-import { IsDateString, IsNotEmpty, IsPositive } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsPositive } from 'class-validator';
 
 export class CreatePagoDto {
-    @IsNotEmpty()
-    @IsDateString()
-    fecha: Date;
-
-    @IsNotEmpty()
+    @IsOptional()
     @IsPositive()
     total: number;
 
-    @IsNotEmpty()
+    @IsOptional()
     estado: string;
-    
+
     @IsNotEmpty()
-    mercadoPago: string;
+    pedido: number
 }

@@ -1,27 +1,55 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePagoDto } from './dto/create-pago.dto';
 import { UpdatePagoDto } from './dto/update-pago.dto';
 import { Repository } from 'typeorm';
 import { Pago } from 'src/entities/pago.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Pedido } from 'src/entities/pedido.entity';
 
 @Injectable()
 export class PagoService {
   constructor(
     @InjectRepository(Pago) private pagoRepository: Repository<Pago>,
+    @InjectRepository(Pedido) private pedidoRepository: Repository<Pedido>,
   ) {}
 
-  create(dto: CreatePagoDto) {
-    const pago = this.pagoRepository.create(dto);
+  async create(dto: CreatePagoDto) {
+    const pedido = await this.pedidoRepository.findOne({
+      where: { id: dto.pedido }
+    });
+
+    if (!pedido) {
+      throw new NotFoundException('Pedido no encontrado');
+    }
+
+    if (pedido.estado == "FINALIZADO" ) throw new BadRequestException('El pedido ya fue pagado');
+    if (pedido.estado == "CANCELADO" ) throw new BadRequestException('El pedido fue cancelado');
+
+    const pedidoPagado = await this.pagoRepository.findOne({
+      where: { pedido: { id: dto.pedido }},
+      relations: ["pedido"]
+    });
+    if (pedidoPagado) {
+      throw new BadRequestException('El pedido ya tiene un pago asociado');
+    }
+    const pago = this.pagoRepository.create({
+      total: pedido.total,
+      estado: 'PAGADO',
+      pedido: pedido
+    });
+
+    pedido.estado = "FINALIZADO";
+    await this.pedidoRepository.save(pedido);
     return this.pagoRepository.save(pago);
   }
 
   findAll() {
-    return this.pagoRepository.find();
+    return this.pagoRepository.find({relations: ['pedido', 'pedido.producto', 'pedido.cliente', 'pedido.cadete']});
   }
 
   async findOne(id: number) {
-    const pago = await this.pagoRepository.findOneBy({ id });
+    const pago = await this.pagoRepository.findOne({ where: { id },
+        relations: ['pedido', 'pedido.producto', 'pedido.cliente', 'pedido.cadete'] });
     if (!pago) {
       throw new NotFoundException('Pago no encontrado');
     }
@@ -31,6 +59,7 @@ export class PagoService {
   async update(id: number, dto: UpdatePagoDto) {
     const pago = await this.findOne(id);
     if (!pago) throw new NotFoundException('Pago no encontrado');
+    if (pago.estado == "PAGADO") throw new BadRequestException('El pedido ya fue pagado');
     Object.assign(pago, dto);
     return this.pagoRepository.save(pago);
   }
@@ -38,6 +67,7 @@ export class PagoService {
   async remove(id: number) {
     const pago = await this.findOne(id);
     if (!pago) throw new NotFoundException('Pago no encontrado');
+    if (pago.estado == "PAGADO") throw new BadRequestException('No se puede eliminar un pago finalizado');
     return this.pagoRepository.remove(pago);
   }
 }

@@ -26,4 +26,7 @@ export class Producto {
 
   @ManyToOne(() => Categoria, categoria => categoria.productos)
   categoria: Categoria;
+
+  @Column({ default: "https://mpago.la/1kWHaXm" })
+  mercadoPagoLink: string;
 }

@@ -44,12 +44,12 @@ export class PagoService {
   }
 
   findAll() {
-    return this.pagoRepository.find({relations: ['pedido', 'pedido.producto', 'pedido.cliente', 'pedido.cadete']});
+    return this.pagoRepository.find({relations: ['pedido', 'pedido.cliente', 'pedido.cadete']});
   }
 
   async findOne(id: number) {
     const pago = await this.pagoRepository.findOne({ where: { id },
-        relations: ['pedido', 'pedido.producto', 'pedido.cliente', 'pedido.cadete'] });
+        relations: ['pedido', 'pedido.cliente', 'pedido.cadete'] });
     if (!pago) {
       throw new NotFoundException('Pago no encontrado');
     }
@@ -60,6 +60,7 @@ export class PagoService {
     const pago = await this.findOne(id);
     if (!pago) throw new NotFoundException('Pago no encontrado');
     if (pago.estado == "PAGADO") throw new BadRequestException('El pedido ya fue pagado');
+    if (pago.pedido.estado == "CANCELADO" ) throw new BadRequestException('El pedido fue cancelado');
     Object.assign(pago, dto);
     return this.pagoRepository.save(pago);
   }

@@ -1,10 +1,6 @@
-import { IsOptional, IsNumber, IsDate, IsString, IsPositive } from 'class-validator';
+import { IsOptional, IsNumber, IsString} from 'class-validator';
 
 export class UpdatePedidoDto {
-  @IsOptional()
-  @IsNumber()
-  producto?: number;
-
   @IsOptional()
   @IsNumber()
   cliente?: number;
@@ -12,11 +8,6 @@ export class UpdatePedidoDto {
   @IsOptional()
   @IsNumber()
   cadete?: number;
-
-  @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  cantidad?: number;
 
   @IsOptional()
   @IsNumber()

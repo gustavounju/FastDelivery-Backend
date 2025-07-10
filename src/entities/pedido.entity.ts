@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn, CreateDateColumn } from 'typeorm';
-import { Producto } from './producto.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Cliente } from './cliente.entity';
 import { Cadete } from './cadete.entity';
 
@@ -8,17 +7,11 @@ export class Pedido {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Producto)
-  producto: Producto;
-
   @ManyToOne(() => Cliente, { nullable: true })
   cliente: Cliente;
 
   @ManyToOne(() => Cadete, { nullable: true })
   cadete: Cadete;
-
-  @Column()
-  cantidad: number;
 
   @Column('decimal')
   total: number;

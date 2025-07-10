@@ -9,6 +9,7 @@ import { ClienteModule } from './modules/cliente/cliente.module';
 import { CadeteModule } from './modules/cadete/cadete.module';
 import { PagoModule } from './modules/pago/pago.module';
 import { PedidoModule } from './modules/pedido/pedido.module';
+import { DetallePedidoModule } from './modules/detalle-pedido/detalle-pedido.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { PedidoModule } from './modules/pedido/pedido.module';
     CadeteModule,
     PedidoModule,
     PagoModule,
+    DetallePedidoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

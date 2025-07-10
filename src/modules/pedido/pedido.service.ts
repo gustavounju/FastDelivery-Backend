@@ -3,26 +3,24 @@ import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { Cadete } from 'src/entities/cadete.entity';
 import { Cliente } from 'src/entities/cliente.entity';
-import { Producto } from 'src/entities/producto.entity';
 import { Pedido } from 'src/entities/pedido.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Producto } from 'src/entities/producto.entity';
+import { DetallePedido } from 'src/entities/detallePedido.entity';
 
 
 @Injectable()
 export class PedidoService {
   constructor(
     @InjectRepository(Pedido) private pedidoRepository: Repository<Pedido>,
-    @InjectRepository(Producto) private productoRepository: Repository<Producto>,
     @InjectRepository(Cliente) private clienteRepository: Repository<Cliente>,
     @InjectRepository(Cadete) private cadeteRepository: Repository<Cadete>,
+    @InjectRepository(Producto) private productoRepository: Repository<Producto>,
+    @InjectRepository(Producto) private detallePedidoRepository: Repository<DetallePedido>,
   ) {}
 
   async create(dto: CreatePedidoDto) {
-    const producto = await this.productoRepository.findOneBy({ id: dto.producto });
-
-    if (!producto) throw new NotFoundException('Producto no encontrado');
-
     const nuevoPedido = new Pedido();
 
     if (dto.cliente) {
@@ -35,9 +33,7 @@ export class PedidoService {
       if (!cadete) throw new NotFoundException('Cadete no encontrado');
       nuevoPedido.cadete = cadete;
     }
-    nuevoPedido.producto = producto;
-    nuevoPedido.cantidad = dto.cantidad;
-    nuevoPedido.total = producto.precio;
+    nuevoPedido.total = 0;
     nuevoPedido.estado = 'PENDIENTE';
     if (dto.observacion !== undefined) nuevoPedido.observacion = dto.observacion;
 
@@ -45,12 +41,12 @@ export class PedidoService {
   }
 
   findAll() {
-    return this.pedidoRepository.find({ relations: ['producto', 'cliente', 'cadete'] });
+    return this.pedidoRepository.find({ relations: ['cliente', 'cadete'] });
   }
 
   async findOne(id: number) {
     const pedido = await this.pedidoRepository.findOne({ where: { id }, 
-                        relations: ['producto', 'cliente', 'cadete'] });
+                        relations: ['cliente', 'cadete'] });
     if (!pedido) {
       throw new NotFoundException('Pedido no encontrado');
     }
@@ -60,12 +56,6 @@ export class PedidoService {
   async update(id: number, dto: UpdatePedidoDto) {
     const pedido = await this.findOne(id);
     if (!pedido) throw new NotFoundException('Pedido no encontrado');
-
-    if (dto.producto) {
-      const producto = await this.productoRepository.findOneBy({ id: dto.producto });
-      if (!producto) throw new NotFoundException('Producto no encontrado');
-      pedido.producto = producto;
-    }
 
     if (dto.cliente) {
       const cliente = await this.clienteRepository.findOneBy({ id: dto.cliente });
@@ -79,8 +69,7 @@ export class PedidoService {
       pedido.cadete = cadete;
     }
 
-    if (dto.cantidad !== undefined) pedido.cantidad = dto.cantidad;
-    if (dto.total !== undefined) pedido.total = pedido.producto.precio * pedido.cantidad;
+    if (dto.total !== undefined) pedido.total = dto.total;
     if (dto.estado) pedido.estado = dto.estado;
     if (dto.observacion !== undefined) pedido.observacion = dto.observacion;
 
@@ -91,6 +80,20 @@ export class PedidoService {
     const pedido = await this.findOne(id);
     if (!pedido) throw new NotFoundException('Pedido no encontrado.');
     if (pedido.estado == "PAGADO") throw new BadRequestException('No se puede eliminar un pedido pagado');
+
+    //Devolver los productos del pedido
+    const detalles = await this.detallePedidoRepository.find({
+      where: { pedido: { id } },
+      relations: ['producto'],
+    });
+
+    for (const detalle of detalles) {
+      detalle.producto.stock += detalle.cantidad;
+      await this.productoRepository.save(detalle.producto);
+    }
+
+    await this.detallePedidoRepository.remove(detalles);
+
     return this.pedidoRepository.remove(pedido);
   }
 }

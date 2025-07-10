@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Producto } from 'src/entities/producto.entity';
 import { Cliente } from 'src/entities/cliente.entity';
 import { Cadete } from 'src/entities/cadete.entity';
+import { DetallePedido } from 'src/entities/detallePedido.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pedido,Producto, Cliente, Cadete])],
+  imports: [TypeOrmModule.forFeature([Pedido, Cliente, Cadete, Producto, DetallePedido])],
   controllers: [PedidoController],
   providers: [PedidoService],
   exports: [PedidoService]

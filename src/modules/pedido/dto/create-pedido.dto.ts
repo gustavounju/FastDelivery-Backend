@@ -1,11 +1,6 @@
-import { IsInt, IsPositive, IsDateString, IsString, Min, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsInt, IsPositive, IsString, IsOptional } from 'class-validator';
 
 export class CreatePedidoDto {
-  @IsNotEmpty()
-  @IsInt()
-  @IsPositive()
-  producto: number;
-  
   @IsOptional()
   @IsInt()
   @IsPositive()
@@ -15,11 +10,6 @@ export class CreatePedidoDto {
   @IsInt()
   @IsPositive()
   cadete?: number;
-
-  @IsNotEmpty()
-  @IsInt()
-  @Min(1)
-  cantidad: number;
 
   @IsOptional()
   @IsPositive()

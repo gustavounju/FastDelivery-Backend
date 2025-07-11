@@ -21,7 +21,7 @@ export class ProductoService {
     if (!categoria) {
       throw new NotFoundException('Categoría no encontrada');
     }
-
+    dto.imagen_nombre? dto.imagen_url =`/uploads/${dto.imagen_nombre}` : null;
     const nuevoProducto = this.productoRepository.create({
       ...dto,
       categoria
@@ -59,6 +59,11 @@ export class ProductoService {
       categoria = encontrada;
     }
 
+    // Si llega imagen_nombre, actualizar también imagen_url
+    if (dto.imagen_nombre) {
+      dto.imagen_url = `/uploads/${dto.imagen_nombre}`;
+    }
+
     const productoActualizado = this.productoRepository.create({
       ...producto,
       ...dto,
@@ -68,10 +73,21 @@ export class ProductoService {
     return this.productoRepository.save(productoActualizado);
   }
 
-
   async remove(id: number) {
     const producto = await this.findOne(id);
     if (!producto) throw new NotFoundException('Producto no encontrado.');
     return this.productoRepository.remove(producto);
+  }
+
+  async findByCategoria(categoriaId: number) {
+    const categoria = await this.categoriaRepository.findOneBy({ id: categoriaId });
+    if (!categoria) {
+      throw new NotFoundException('Categoría no encontrada');
+    }
+
+    return this.productoRepository.find({
+      where: { categoria: { id: categoriaId } },
+      relations: ['categoria'],
+    });
   }
 }

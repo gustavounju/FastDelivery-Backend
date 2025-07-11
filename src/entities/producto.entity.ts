@@ -29,4 +29,7 @@ export class Producto {
 
   @Column({ default: "https://mpago.la/1kWHaXm" })
   mercadoPagoLink: string;
+
+  @Column({ nullable: true })
+  imagen_nombre: string; 
 }

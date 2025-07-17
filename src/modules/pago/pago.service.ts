@@ -32,13 +32,14 @@ export class PagoService {
     if (pedidoPagado) {
       throw new BadRequestException('El pedido ya tiene un pago asociado');
     }
+
+    pedido.estado = "FINALIZADO";
     const pago = this.pagoRepository.create({
       total: pedido.total,
       estado: 'PAGADO',
       pedido: pedido
     });
 
-    pedido.estado = "FINALIZADO";
     await this.pedidoRepository.save(pedido);
     return this.pagoRepository.save(pago);
   }

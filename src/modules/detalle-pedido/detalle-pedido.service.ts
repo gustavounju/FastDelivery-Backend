@@ -74,7 +74,8 @@ export class DetallePedidoService {
   }
 
   async findByPedido(pedidoId: number) {
-    return this.detallePedidoRepository.find({ where: { pedido: { id: pedidoId } } });
+    return this.detallePedidoRepository.find({ where: { pedido: { id: pedidoId } },
+                        relations: ['pedido', 'producto']  });
   }
 
   async update(id: number, dto: UpdateDetallePedidoDto) {

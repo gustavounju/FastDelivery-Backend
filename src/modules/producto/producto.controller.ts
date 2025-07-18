@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, NotFoundException, UseInterceptors, UploadedFile, Query, BadRequestException } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
@@ -6,6 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody, ApiParam } from '@nestjs/swagger';
+import { CategoriaIdsDto } from './dto/categoria-ids.dto';
 
 @Controller('productos')
 export class ProductoController {
@@ -155,6 +156,35 @@ export class ProductoController {
       success: true,
       data: productos,
       message: 'Productos filtrados por categoría obtenidos correctamente',
+    };
+  }
+
+  @Post('filtrar/categorias')
+  @ApiOperation({ summary: 'Obtener productos filtrados por varias categorías' })
+  @ApiResponse({ status: 200, description: 'Productos filtrados obtenidos correctamente' })
+  async findByCategorias(@Body() body: CategoriaIdsDto) {
+    if (!body?.categorias) {
+      throw new BadRequestException('Debe enviar el campo "categorias"');
+    }
+    const productos = await this.productoService.findByCategorias(body.categorias);
+    return {
+      success: true,
+      data: productos,
+      message: 'Productos filtrados por categorías obtenidos correctamente',
+    };
+  }
+
+  @Get('buscar/query')
+  @ApiOperation({ summary: 'Buscar productos por nombre' })
+  @ApiResponse({ status: 200, description: 'Productos encontrados correctamente' })
+  async findByName(@Query('nombre') nombre: string) {
+    if (!nombre) throw new BadRequestException('Nombre requerido');
+
+    const productos = await this.productoService.findByName(nombre);
+    return {
+      success: true,
+      data: productos,
+      message: `Productos que coinciden con '${nombre}' obtenidos correctamente`,
     };
   }
 }

@@ -29,7 +29,7 @@ async function bootstrap() {
 
   // Configuracion de Swagger
   const config = new DocumentBuilder()
-    .setTitle('API de Productos')
+    .setTitle('API de FastDelivery')
     .setDescription('Documentación de la API para gestión de productos')
     .setVersion('1.0')
     .build();

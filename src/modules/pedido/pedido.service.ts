@@ -17,7 +17,7 @@ export class PedidoService {
     @InjectRepository(Cliente) private clienteRepository: Repository<Cliente>,
     @InjectRepository(Cadete) private cadeteRepository: Repository<Cadete>,
     @InjectRepository(Producto) private productoRepository: Repository<Producto>,
-    @InjectRepository(Producto) private detallePedidoRepository: Repository<DetallePedido>,
+    @InjectRepository(DetallePedido) private detallePedidoRepository: Repository<DetallePedido>,
   ) {}
 
   async create(dto: CreatePedidoDto) {
@@ -79,20 +79,27 @@ export class PedidoService {
   async remove(id: number) {
     const pedido = await this.findOne(id);
     if (!pedido) throw new NotFoundException('Pedido no encontrado.');
-    if (pedido.estado == "PAGADO") throw new BadRequestException('No se puede eliminar un pedido pagado');
+    if (pedido.estado == "FINALIZADO") throw new BadRequestException('No se puede eliminar un pedido pagado');
 
-    //Devolver los productos del pedido
+    // Obtener detalles del pedido con su producto (si existen)
     const detalles = await this.detallePedidoRepository.find({
       where: { pedido: { id } },
-      relations: ['producto'],
     });
 
-    for (const detalle of detalles) {
-      detalle.producto.stock += detalle.cantidad;
-      await this.productoRepository.save(detalle.producto);
+    if (detalles.length > 0) {
+      const detallesConProducto = await this.detallePedidoRepository.find({
+        where: { pedido: { id } },
+        relations: ['producto'],
+      });
+      for (const detalle of detallesConProducto) {
+        //Devolver los productos del pedido
+        if (detalle.producto) {
+          detalle.producto.stock += detalle.cantidad;
+          await this.productoRepository.save(detalle.producto);
+        }
+      }
+      await this.detallePedidoRepository.remove(detallesConProducto);
     }
-
-    await this.detallePedidoRepository.remove(detalles);
 
     return this.pedidoRepository.remove(pedido);
   }

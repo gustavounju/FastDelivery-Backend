@@ -79,6 +79,7 @@ export class ProductoService {
     return this.productoRepository.remove(producto);
   }
 
+  //Filtrar productos dada una categoria
   async findByCategoria(categoriaId: number) {
     const categoria = await this.categoriaRepository.findOneBy({ id: categoriaId });
     if (!categoria) {
@@ -89,5 +90,26 @@ export class ProductoService {
       where: { categoria: { id: categoriaId } },
       relations: ['categoria'],
     });
+  }
+
+  //Filtrar productos dadas varias categorias
+  async findByCategorias(categoriaIds: number[]) {
+    if (categoriaIds.length === 0) {
+      return this.productoRepository.find({ relations: ['categoria'] });
+    }
+    return this.productoRepository
+      .createQueryBuilder('producto')
+      .leftJoinAndSelect('producto.categoria', 'categoria')
+      .where('producto.categoriaId IN (:...ids)', { ids: categoriaIds })
+      .getMany();
+  }
+
+  //Buscar productos por nombre
+  async findByName(nombre: string) {
+    return this.productoRepository
+      .createQueryBuilder('producto')
+      .leftJoinAndSelect('producto.categoria', 'categoria')
+      .where('LOWER(producto.nombre) LIKE LOWER(:nombre)', { nombre: `%${nombre}%` })
+      .getMany();
   }
 }

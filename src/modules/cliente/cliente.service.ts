@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cliente } from 'src/entities/cliente.entity';
 import { Repository } from 'typeorm';
+import { Pedido } from 'src/entities/pedido.entity';
 
 @Injectable()
 export class ClienteService {
@@ -44,6 +45,12 @@ export class ClienteService {
   async remove(id: number) {
     const cliente = await this.findOne(id);
     if (!cliente) throw new NotFoundException('Cliente no encontrado');
+    const pedidos = await this.clienteRepository.manager.find(Pedido, {
+      where: { cliente: { id } },
+    });
+    if (pedidos.length > 0) {
+      throw new BadRequestException('No se puede eliminar un cliente con pedidos asociados');
+    }
     return this.clienteRepository.remove(cliente);
   }
 }

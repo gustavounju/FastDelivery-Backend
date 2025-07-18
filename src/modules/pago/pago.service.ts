@@ -5,17 +5,19 @@ import { Repository } from 'typeorm';
 import { Pago } from 'src/entities/pago.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pedido } from 'src/entities/pedido.entity';
+import { PagoMailService } from './mail.service';
 
 @Injectable()
 export class PagoService {
   constructor(
     @InjectRepository(Pago) private pagoRepository: Repository<Pago>,
     @InjectRepository(Pedido) private pedidoRepository: Repository<Pedido>,
+    private readonly pagoMailService: PagoMailService,
   ) {}
 
   async create(dto: CreatePagoDto) {
     const pedido = await this.pedidoRepository.findOne({
-      where: { id: dto.pedido }
+      where: { id: dto.pedido },relations: ['cliente']
     });
 
     if (!pedido) {
@@ -32,13 +34,18 @@ export class PagoService {
     if (pedidoPagado) {
       throw new BadRequestException('El pedido ya tiene un pago asociado');
     }
+
+    pedido.estado = "FINALIZADO";
     const pago = this.pagoRepository.create({
       total: pedido.total,
       estado: 'PAGADO',
       pedido: pedido
     });
 
-    pedido.estado = "FINALIZADO";
+    if (pedido.cliente?.email) {
+      await this.pagoMailService.enviarConfirmacionPago(pedido.cliente, pago.total);
+    }
+
     await this.pedidoRepository.save(pedido);
     return this.pagoRepository.save(pago);
   }

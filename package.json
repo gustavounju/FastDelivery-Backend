@@ -1,10 +1,30 @@
 {
-  "name": "project-delivery-server",
+  "name": "fastdelivery-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "FastDelivery API - Sistema completo de gestión para servicios de delivery desarrollado con NestJS, TypeScript, MySQL y Docker",
+  "author": "GuillermoCruz27 <guillermo.cruz@email.com>",
   "private": true,
   "license": "UNLICENSED",
+  "keywords": [
+    "nestjs",
+    "typescript",
+    "api",
+    "delivery",
+    "mysql",
+    "docker",
+    "swagger",
+    "typeorm",
+    "rest",
+    "backend"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GuillermoCruz27/Project-Delivery-Server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GuillermoCruz27/Project-Delivery-Server/issues"
+  },
+  "homepage": "https://github.com/GuillermoCruz27/Project-Delivery-Server#readme",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

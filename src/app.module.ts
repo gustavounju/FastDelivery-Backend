@@ -13,6 +13,7 @@ import { DetallePedidoModule } from './modules/detalle-pedido/detalle-pedido.mod
 import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -43,7 +44,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         from: '"Delivery App" <fastdelivery@gmail.com>',
       },
       template: {
-        dir: join(process.cwd(), 'templates'),//join(__dirname, 'templates'),
+        dir: join(process.cwd(), 'templates'), //join(__dirname, 'templates'),
         adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
@@ -57,6 +58,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     PedidoModule,
     PagoModule,
     DetallePedidoModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,45 +1,44 @@
-/*import { NestFactory } from '@nestjs/core';
+// src/main.ts
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
-}
 
-bootstrap();*/
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import { join } from 'path';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+  // Configuración de validación
+  app.useGlobalPipes(new ValidationPipe());
 
-async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.setGlobalPrefix('api/');
+  // Habilitar CORS
+  app.enableCors();
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,           // Elimina propiedades no declaradas en los DTO
-    transform: true
-  }));
-
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
+  // ⚠️ IMPORTANTE: Configurar prefijo ANTES de Swagger
+  app.setGlobalPrefix('api', {
+    exclude: ['health'],  // No incluir 'api/docs' aquí
   });
 
-  // Configuracion de Swagger
+  // Configuración de Swagger
   const config = new DocumentBuilder()
-    .setTitle('API de FastDelivery')
-    .setDescription('Documentación de la API para gestión de productos')
+    .setTitle('FastDelivery API')
+    .setDescription('API de gestión de delivery')
     .setVersion('1.0')
+    .addServer('http://localhost:3000', 'Servidor Local')  // ⭐ AGREGAR ESTA LÍNEA
+    .addTag('productos')
+    .addTag('categorias')
+    .addTag('auth-admin')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-  //Fin
 
-  app.enableCors(); // <-- Habilita CORS para todos los orígenes (solo para desarrollo)
+  // ⚠️ CAMBIO: Usar 'docs' sin /api porque el prefijo ya se aplicó
+  SwaggerModule.setup('docs', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
+  const PORT = process.env.PORT || 3000;
+  await app.listen(PORT);
+
+  console.log(`🚀 Aplicación corriendo en: http://localhost:${PORT}/api`);
+  console.log(`📚 Documentación Swagger: http://localhost:${PORT}/api/docs`);
 }
 bootstrap();
